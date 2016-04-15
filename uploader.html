@@ -29,6 +29,7 @@
         input{
             width: 100%;
             height: 17px;
+            font-size: 14px;
         }
         i{
             height: 17px;
@@ -41,8 +42,11 @@
             cursor:pointer;
             position: relative;
         }
-        .row-default{
+        .default-content{
             display: inline-block;
+        }
+        .has-error-input input{
+            color:red;
         }
 
 
@@ -50,33 +54,31 @@
 
         .error{
             max-width: 300px;
-            border:1px solid red;
+            min-height: 35px;
             position:absolute;
-            top:17px;
-            left:120px;
-            background-color:#FFF;
-            padding:5px 20px;
+            top:5px;
+            left:220px;
+            background-color:pink;
+            padding:3px 16px;
             z-index:10;
             border-radius:5px;
+            color:red;
+            font-size:14px;
+            line-height: 35px;
         }
-        .error:before,.error:after{
+        .error:before{
             content:"";
             display:block;
             border-width:7px 18px;
             position:absolute;
-            bottom:45px;
-            left:-30px;
+            top:12px;
+            left:-36px;
             border-style:solid dashed dashed;
-            border-color:transparent red transparent transparent;
+            border-color:transparent pink transparent transparent;
             font-size:0;
             line-height:0;
         }
-        .error:after{
-            boder-width:7px 18px;
-            bottom:45px;
-            left:-30px;
-            border-color:transparent #FFFFFF transparent transparent;
-        }
+
     </style>
 
 </head>
@@ -87,7 +89,7 @@
     <div class = "rows">
         <label for="IdCard">身份证</label>
         <div id = "IdCard" class = "input-box">
-            <div class = "row-default">_</div>
+            <div class = "default-content">_</div>
             <i class = "icon icon-ff-knowledge"></i>
             <!--<input class = "vf" type="text" placeholder="请输入2~20位字符">-->
         </div>
@@ -95,7 +97,7 @@
     <div class = "rows">
         <label for="type"> 类型</label>
         <div id = "type" class = "input-box">
-            <div class = "row-default">_</div>
+            <div class = "default-content">_</div>
             <i class = "icon icon-ff-knowledge"></i>
             <!--<input class = "vf" type="text" placeholder="请输入2~20位字符">-->
         </div>
@@ -103,7 +105,7 @@
     <div class = "rows">
         <label for="date">离职日期</label>
         <div id = "date" class = "input-box">
-            <div class = "row-default">_</div>
+            <div class = "default-content">_</div>
             <i class = "icon icon-ff-knowledge"></i>
             <!--<input class = "vf" type="text" placeholder="请输入2~20位字符">-->
         </div>
@@ -115,25 +117,26 @@
 
 </body>
 <script src = "jquery-1.11.1.min.js"></script>
-<script src = "verify2.0.js"></script>
+<script src = "verify2.1.js"></script>
 <script>
 
     var inputHtml = '<input class = "vf-phone vf-number" data-min = "2" data-max = "10" type="text" placeholder="请输入2~20位字符" value = "@(val)">';
-    var defaultHtml =  '<div class = "row-default">@(val)</div><i class = "icon icon-ff-knowledge"></i>'
+    var defaultHtml =  '<div class = "default-content">@(val)</div><i class = "icon icon-ff-knowledge"></i>'
 
 
-    $(document).on('click','.rows .input-box i',defaultHandler)
+    $(document).on('click','.rows .input-box .default-content , .rows .input-box i',defaultHandler)
 
     $(document).on('blur change','.rows .typing input',inputHandler)
 
+    $(document).on('focus','.rows .typing input',inputInit)
 
     function defaultHandler(){
+
         var pa = $(this).parent('.input-box');
         if(pa.hasClass('typing')){//安全
             return
         }
-        var originVal = pa.find('.row-default').html();
-        console.log(originVal)
+        var originVal = pa.find('.default-content').html();
         var val = originVal == "_" ? "":originVal;
         pa.addClass('typing').html($(formString(inputHtml,{'val':val})));
         pa.find('input').focus();
@@ -146,7 +149,15 @@
         var val = $(this).val() ? $(this).val() : '_';
         var $html = $(formString(defaultHtml,{'val':val}))
         pa.html($html).removeClass('typing')
-    }
+    }//change,blur输入框事件
+    function inputInit(){
+        var t = $(this),
+                faDom = $(this).parent('.input-box'),
+                grandFaDom = faDom.parent('.rows');
+        faDom.find('.error').remove();
+        faDom.removeClass("has-error-input");
+        grandFaDom.removeClass("has-error");
+    }//focus输入框事件
 
     function formString(str,data){
         return str.replace(/@\((\w+)\)/g,function(match,key){

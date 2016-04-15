@@ -533,6 +533,7 @@ function regularCheck(dom,type,rule,text){
         return
     }
 
+
     if(!rule.test(objVal)){
         showError(dom,type,text);
         return false;
@@ -544,24 +545,24 @@ function regularCheck(dom,type,rule,text){
 
 //报错方法
 function showError(thisDom,type,text){
+    console.log(type)
     clearError(thisDom,type);
     var tDom = $(thisDom);
     var faDom = tDom.parent('.input-box');
     var grandFaDom = faDom.parent('.rows');
-    //if(faDom.find('.' + type).length > 0){
-    //    return
-    //}
-    if(faDom.find('.error').length > 0){
-        return
+    faDom.addClass('has-error-input');
+    grandFaDom.addClass('has-error');
+
+    if(faDom.find('.error').length == 0){
+        var error = $("<div class='error " + type + "'></div>");
+        error.text(text);
+        faDom.append(error)
     }
-    var error = $("<div class='error " + type + "'></div>");
-    error.text(text);
-    faDom.append(error).addClass("has-error-input");
-    grandFaDom.addClass("has-error");
 }
 
 //清除报错方法
 function clearError(thisDom,type){
+    console.log(type)
     var tDom = $(thisDom);
     var faDom = tDom.parent('.input-box');
     var grandFaDom = faDom.parent('.rows');
